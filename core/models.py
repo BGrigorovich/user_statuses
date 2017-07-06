@@ -3,9 +3,8 @@ from django.db import models
 
 
 class UserStatus(models.Model):
-    id = models.IntegerField(primary_key=True)
-    status = models.TextField(unique=True)
-    color = models.TextField(default='FFFFFF', validators=[
+    status = models.CharField(max_length=50, unique=True)
+    color = models.CharField(max_length=6, default='FFFFFF', validators=[
         RegexValidator(
             regex='^[0-9A-Fa-f]{6}$',
             message='Should be valid HTML color code',
@@ -13,8 +12,13 @@ class UserStatus(models.Model):
         ),
     ])
 
+    def __str__(self):
+        return self.status
+
 
 class User(models.Model):
-    id = models.IntegerField(primary_key=True)
-    username = models.TextField(unique=True)
+    username = models.CharField(max_length=50, unique=True)
     status = models.ForeignKey(to='core.UserStatus')
+
+    def __str__(self):
+        return self.username

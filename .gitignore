@@ -1,0 +1,9 @@
+# Python
+*.log
+*.po[cod]
+__pycache__/
+
+# Pycharm
+.idea/
+
+run.sh

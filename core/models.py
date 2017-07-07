@@ -18,7 +18,7 @@ class UserStatus(models.Model):
 
 class User(models.Model):
     username = models.CharField(max_length=50, unique=True)
-    status = models.ForeignKey(to='core.UserStatus')
+    status = models.ForeignKey(to='core.UserStatus', null=True, blank=True)
 
     def __str__(self):
         return self.username

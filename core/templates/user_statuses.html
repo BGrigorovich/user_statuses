@@ -2,15 +2,22 @@
 
 {% block content %}
     <div ng-app="userStatuses" ng-controller="userStatusesController">
-        <div class="row" ng-if="!loggedIn">
+        <div class="row" ng-show="!currentUser.id">
             <div class="col-sm-offset-3 col-sm-4">
-                <input type="text" ng-model="username">
+                <input type="text" ng-model="username" class="form-control">
             </div>
             <div class="col-sm-2">
                 <button class="form-control" ng-click="login()">Login</button>
             </div>
         </div>
-        <div class="row" ng-if="loggedIn">
+        <div class="row" ng-show="currentUser.id">
+            Hello {$ currentUser.username $} you are {$ currentUser.status $}
+
+            Update My Current Status
+            <div class="form-control">
+                <select ng-options="status as status.name for status in statuses"
+                        ng-model="currentUser.statusId" ng-change="update()"></select>
+            </div>
         </div>
     </div>
 {% endblock %}

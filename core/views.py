@@ -16,21 +16,25 @@ class LoginView(views.View):
     def post(self, request, *args, **kwargs):
         request_data = json.loads(request.body.decode("utf-8"))
         username = request_data.get('username')
-        user = User.objects.get_or_create(username=username)
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            User.objects.create(username=username)
+            user = User.objects.get(username=username)
         return JsonResponse({
             'id': user.pk,
             'username': user.username,
             'status_id': user.status_id,
-            'status': user.status.status,
-            'status_color': user.status.color
+            'status': user.status.status if user.status else None,
+            'status_color': user.status.color if user.status else None
         }, status=200)
 
 
 class ChangeUserStatusView(views.View):
     def post(self, request, *args, **kwargs):
         request_data = json.loads(request.body.decode("utf-8"))
-        user_id = request_data.get('user_id')
-        status_id = request_data.get('status_id')
+        user_id = request_data.get('userId')
+        status_id = request_data.get('statusId')
         User.objects.filter(id=user_id).update(status_id=status_id)
         return JsonResponse({'message': 'ok'}, status=200)
 

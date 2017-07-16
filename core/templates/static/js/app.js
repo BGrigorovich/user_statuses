@@ -1,4 +1,4 @@
-var app = angular.module("userStatuses", []).config(function($interpolateProvider, $httpProvider){
+var app = angular.module("userStatuses", []).config(function($interpolateProvider, $httpProvider) {
     $interpolateProvider.startSymbol('{$').endSymbol('$}');
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -9,23 +9,30 @@ app.controller("userStatusesController", function($scope, $http) {
     $scope.currentUser = {
         id: null,
         username: null,
-        statusId: null,
-        status: null,
-        statusColor: null
+        status: {
+            id: null,
+            status: null,
+            color: null
+        }
     };
     $scope.statuses = [];
+    $scope.users = [];
+    $scope.usernameFilter = '';
+    $scope.statusFilter = null;
 
     $scope.login = function () {
-        console.log($scope.username);
         $http.post("/login/", {username: $scope.username})
             .then(function (response) {
                 $scope.currentUser = {
-                    id: response.id,
-                    username: response.username,
-                    statusId: response.status_id,
-                    status: response.status,
-                    statusColor: response.statusColor
-                }
+                    id: response.data.id,
+                    username: response.data.username,
+                    status: {
+                        id: response.data.status_id,
+                        status: response.data.status,
+                        color: response.data.statusColor
+                    }
+                };
+                $scope.getUsers();
             });
     };
 
@@ -43,4 +50,24 @@ app.controller("userStatusesController", function($scope, $http) {
     };
 
     $scope.getStatuses();
+
+    $scope.updateUserStatus = function () {
+        $http.post("/change-status/", {userId: $scope.currentUser.id, statusId: $scope.currentUser.status.id})
+    };
+
+    $scope.getUsers = function () {
+        $http.get("/users/")
+            .then(function (response) {
+                $scope.users = JSON.parse(response.data).map(function(user) {
+                    return {
+                        id: user.pk,
+                        username: user.fields.username,
+                        status: $scope.statuses.filter(function(status) {
+                            return status.id == user.fields.status
+                        })[0]
+                    }
+                })
+            });
+
+    }
 });

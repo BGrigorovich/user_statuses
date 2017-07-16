@@ -3,6 +3,9 @@
 {% block content %}
     <div ng-app="userStatuses" ng-controller="userStatusesController">
         <div class="row" ng-show="!currentUser.id">
+            <div class="text-center">
+                Welcome to MyWorkStatus
+            </div>
             <div class="col-sm-offset-3 col-sm-4">
                 <input type="text" ng-model="username" class="form-control">
             </div>
@@ -11,12 +14,37 @@
             </div>
         </div>
         <div class="row" ng-show="currentUser.id">
-            Hello {$ currentUser.username $} you are {$ currentUser.status $}
+            <div class="col-sm-offset-3 col-sm-6">
+                <div class="col-sm-12" ng-show="currentUser.status.id">
+                    Hello {$ currentUser.username $} you are {$ currentUser.status.status $}
+                </div>
+                <div class="form-group col-sm-6">
+                    <label for="">Update My Current Status</label>
+                    <select ng-options="status as status.status for status in statuses track by status.id"
+                            class="form-control"
+                            ng-model="currentUser.status" ng-change="updateUserStatus()">
+                    </select>
+                </div>
 
-            Update My Current Status
-            <div class="form-control">
-                <select ng-options="status as status.name for status in statuses"
-                        ng-model="currentUser.statusId" ng-change="update()"></select>
+                <div class="col-sm-12">
+                    <div class="col-sm-6">
+                        <input type="text" ng-model="usernameFilter" placeholder="Search by name..."
+                               class="form-control">
+                    </div>
+                    <div class="col-sm-6">
+                        <select ng-options="status as status.status for status in statuses track by status.id"
+                                class="form-control pull-right"
+                                ng-model="statusFilter">
+                            <option value="">Filter by status...</option>
+                        </select>
+                    </div>
+                    <table class="table table-bordered">
+                            <tr ng-repeat="user in users | filter : {username: usernameFilter} | filter : (!!statusFilter || undefined) && {status: statusFilter}">
+                                <td>{$ user.username $} <span ng-show="user.status.id">({$ user.status.status $})</span><tr>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

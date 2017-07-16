@@ -39,10 +39,11 @@
                         </select>
                     </div>
                     <table class="table table-bordered">
-                            <tr ng-repeat="user in users | filter : {username: usernameFilter} | filter : (!!statusFilter || undefined) && {status: statusFilter}">
-                                <td>{$ user.username $} <span ng-show="user.status.id">({$ user.status.status $})</span><tr>
-                            </tr>
-                        </table>
+                        <tr ng-repeat="user in users | filter : {username: usernameFilter} | filter : (!!statusFilter || undefined) && {status: statusFilter}"
+                            ng-style="{'background-color': '#' + user.status.color}">
+                            <td>{$ user.username $} <span ng-show="user.status.id">({$ user.status.status $})</span>
+                        <tr>
+                    </table>
                     </div>
                 </div>
             </div>

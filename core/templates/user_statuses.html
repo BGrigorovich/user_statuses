@@ -1,9 +1,9 @@
 {% extends 'general.html' %}
 
 {% block content %}
-    <div ng-app="userStatuses" ng-controller="userStatusesController" id="azaza">
+    <div ng-app="userStatuses" ng-controller="userStatusesController">
         <div class="row" ng-show="!currentUser.id">
-            <div class="text-center">
+            <div class="text-center" id="login-header">
                 Welcome to MyWorkStatus
             </div>
             <div class="col-sm-offset-3 col-sm-4">
@@ -16,7 +16,7 @@
         <div class="row" ng-show="currentUser.id">
             <div class="col-sm-offset-3 col-sm-6">
                 <div class="row">
-                    <div class="col-sm-12">
+                    <div class="col-sm-12" id="greeting-header">
                         Hello {$ currentUser.username $}<span ng-show="currentUser.status.id"> you are {$ currentUser.status.status $}</span>
                     </div>
                     <div class="form-group col-sm-6">
@@ -27,10 +27,10 @@
                         </select>
                     </div>
                     <div class="col-sm-12">
-                        <hr style="width: 100%; height: 1px; background-color:#dddddd;" />
+                        <hr class="grey-hr"/>
                     </div>
                     <div class="col-sm-12">
-                        <div class="row">
+                        <div class="row table-filter">
                             <div class="col-sm-6">
                                 <input type="text" ng-model="usernameFilter" placeholder="Search by name..."
                                        class="form-control">
@@ -42,6 +42,8 @@
                                     <option value="">Filter by status...</option>
                                 </select>
                             </div>
+                        </div>
+                        <div class="row">
                             <div class="col-sm-12">
                                 <table class="table table-bordered">
                                     <tr ng-repeat="user in users | filter : {username: usernameFilter} | filter : (!!statusFilter || undefined) && {status: statusFilter}"

@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
     'core',
 ]
 
@@ -128,3 +129,12 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
     os.path.join(BASE_DIR, 'core/templates/static/'),
 ]
+
+
+# Channels
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "asgiref.inmemory.ChannelLayer",
+        "ROUTING": "core.routing.channel_routing",
+    },
+}

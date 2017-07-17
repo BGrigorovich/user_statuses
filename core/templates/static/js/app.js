@@ -1,7 +1,7 @@
 var app = angular.module("userStatuses", []).config(function($interpolateProvider, $httpProvider) {
-    $interpolateProvider.startSymbol('{$').endSymbol('$}');
-    $httpProvider.defaults.xsrfCookieName = 'csrftoken';
-    $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+    $interpolateProvider.startSymbol("{$").endSymbol("$}");
+    $httpProvider.defaults.xsrfCookieName = "csrftoken";
+    $httpProvider.defaults.xsrfHeaderName = "X-CSRFToken";
 });
 
 app.controller("userStatusesController", function($scope, $http) {
@@ -23,16 +23,22 @@ app.controller("userStatusesController", function($scope, $http) {
     $scope.login = function () {
         $http.post("/login/", {username: $scope.username})
             .then(function (response) {
-                $scope.currentUser = {
-                    id: response.data.id,
-                    username: response.data.username,
-                    status: {
-                        id: response.data.status_id,
-                        status: response.data.status,
-                        color: response.data.statusColor
-                    }
-                };
+                $scope.currentUser = response.data;
                 $scope.getUsers();
+
+                var socket = new WebSocket("ws://" + window.location.host + "/users/");
+
+                socket.onmessage = function(event) {
+                    var message = JSON.parse(event.data);
+                    console.log(message)
+                    var userIndex = $scope.users.map(function(user) {return user.id}).indexOf(message.user.id);
+                    if (userIndex === -1) {
+                        $scope.users.push(message.user)
+                    } else {
+                        $scope.users[userIndex] = message.user;
+                    }
+                    $scope.$apply();
+                };
             });
     };
 
@@ -68,6 +74,5 @@ app.controller("userStatusesController", function($scope, $http) {
                     }
                 })
             });
-
     }
 });

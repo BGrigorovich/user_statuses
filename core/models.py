@@ -1,5 +1,8 @@
+from channels import Group
 from django.core.validators import RegexValidator
 from django.db import models
+
+from .consumers import ws_message
 
 
 class UserStatus(models.Model):
@@ -22,3 +25,19 @@ class User(models.Model):
 
     def __str__(self):
         return self.username
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
+        message = {
+            'user': {
+                'id': self.id,
+                'username': self.username,
+                'status': {
+                    'id': self.status_id,
+                    'status': self.status.status if self.status else None,
+                    'color': self.status.color if self.status else None
+                }
+            }
+        }
+        ws_message(message)

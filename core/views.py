@@ -19,14 +19,16 @@ class LoginView(views.View):
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
-            User.objects.create(username=username)
+            User(username=username).save()
             user = User.objects.get(username=username)
         return JsonResponse({
             'id': user.pk,
             'username': user.username,
-            'status_id': user.status_id,
-            'status': user.status.status if user.status else None,
-            'status_color': user.status.color if user.status else None
+            'status': {
+                'id': user.status_id,
+                'status': user.status.status if user.status else None,
+                'color': user.status.color if user.status else None
+            }
         }, status=200)
 
 
@@ -35,7 +37,9 @@ class ChangeUserStatusView(views.View):
         request_data = json.loads(request.body.decode("utf-8"))
         user_id = request_data.get('userId')
         status_id = request_data.get('statusId')
-        User.objects.filter(id=user_id).update(status_id=status_id)
+        user = User.objects.get(id=user_id)
+        user.status_id = status_id
+        user.save()
         return JsonResponse({'message': 'ok'}, status=200)
 
 

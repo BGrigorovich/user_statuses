@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 
-class LoginPage extends React.Component {
+export default class LoginPage extends React.Component {
     constructor() {
         super();
         this.state = {
@@ -42,5 +42,3 @@ const LoginButton = (props) =>
     <div className="col-sm-2">
         <button className="form-control" onClick={props.login}>Login</button>
     </div>;
-
-export default LoginPage

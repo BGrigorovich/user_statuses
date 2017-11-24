@@ -138,5 +138,3 @@ CHANNEL_LAYERS = {
         "ROUTING": "core.routing.channel_routing",
     },
 }
-
-# CSRF_COOKIE_NAME = "XSRF-TOKEN"

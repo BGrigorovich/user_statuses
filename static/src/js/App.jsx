@@ -1,11 +1,12 @@
 import React from 'react';
 import LoginPage from './Login.jsx';
+import StatusesPage from './Statuses.jsx';
 import axios from 'axios';
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
-class App extends React.Component {
+export default class App extends React.Component {
     constructor() {
         super();
         this.state = {
@@ -26,8 +27,10 @@ class App extends React.Component {
     };
 
     render() {
-        return <div><LoginPage updateCurrentUser={this.updateCurrentUser}/></div>;
+        if (!this.state.currentUser.id) {
+            return <LoginPage updateCurrentUser={this.updateCurrentUser}/>;
+        } else {
+            return <StatusesPage />;
+        }
     }
 }
-
-export default App

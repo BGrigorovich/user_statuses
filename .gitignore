@@ -7,6 +7,3 @@ __pycache__/
 .idea/
 
 run.sh
-
-core/templates/static/bower_components
-core/templates/static/node_modules

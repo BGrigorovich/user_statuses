@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'user_statuses.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('PG_NAME', 'aeworms'),
+        'NAME': os.getenv('PG_NAME', 'statuses'),
         'USER': os.getenv('PG_USER', 'postgres'),
         'PASSWORD': os.getenv('PG_PASSWORD'),
         'HOST': os.getenv('PG_HOST', '127.0.0.1'),
@@ -126,8 +126,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-    os.path.join(BASE_DIR, 'core/templates/static/'),
+    os.path.join(BASE_DIR, "static/dist/"),
 ]
 
 

@@ -127,6 +127,7 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static/dist/"),
+    os.path.join(BASE_DIR, "static/node_modules/"),
 ]
 
 
@@ -137,3 +138,5 @@ CHANNEL_LAYERS = {
         "ROUTING": "core.routing.channel_routing",
     },
 }
+
+# CSRF_COOKIE_NAME = "XSRF-TOKEN"

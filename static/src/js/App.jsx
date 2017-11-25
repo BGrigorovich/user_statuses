@@ -30,7 +30,7 @@ export default class App extends React.Component {
         if (!this.state.currentUser.id) {
             return <LoginPage updateCurrentUser={this.updateCurrentUser}/>;
         } else {
-            return <StatusesPage />;
+            return <StatusesPage currentUser={this.state.currentUser}/>;
         }
     }
 }

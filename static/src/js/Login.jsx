@@ -16,7 +16,6 @@ export default class LoginPage extends React.Component {
     login = (e) => {
         axios.post("/login/", {username: this.state.username})
             .then(response => {
-                // this.setState({currentUser: response.data});
                 this.props.updateCurrentUser(response.data);
             });
     };

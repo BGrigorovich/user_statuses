@@ -12,29 +12,12 @@ export default class StatusesPage extends React.Component {
 
         let component = this;
         axios.get("/statuses/")
-            .then(function (response) {
-                component.setState({
-                    statuses: JSON.parse(response.data).map(status => {
-                        return {
-                            id: status.pk,
-                            status: status.fields.status,
-                            color: status.fields.color
-                        }
-                    })
-                })
+            .then(response => {
+                component.setState({statuses: response.data});
             });
-
         axios.get("/users/")
-            .then(function (response) {
-                component.setState({
-                    users: JSON.parse(response.data).map(user => {
-                        return {
-                            id: user.pk,
-                            username: user.fields.username,
-                            status: component.state.statuses.filter(status => {status.id == user.fields.status})[0]
-                        }
-                    })
-                })
+            .then(response => {
+                component.setState({users: response.data})
             });
     }
 
@@ -43,6 +26,7 @@ export default class StatusesPage extends React.Component {
     };
 
     updateStatus = () => {
+        axios.post("/change-status/", {userId: this.props.currentUser.id, statusId: this.props.currentUser.status.id})
     };
 
     render() {
@@ -52,7 +36,13 @@ export default class StatusesPage extends React.Component {
             <div className="col-sm-offset-3 col-sm-6">
                 <div className="row">
                     <GreetingHeader currentUser={this.props.currentUser}/>
-                    <UpdateStatusDropdown currentUser={this.props.currentUser} statuses={this.state.statuses}/>
+                    <UpdateStatusDropdown currentUser={this.props.currentUser}
+                                          statuses={this.state.statuses}
+                                          updateStatus={this.updateStatus}/>
+                    <div className="col-sm-12">
+                        <hr className="grey-hr"/>
+                    </div>
+                    <UsersTable users={this.state.users} statuses={this.state.statuses}/>
                 </div>
             </div>
         </div>
@@ -65,7 +55,8 @@ class UpdateStatusDropdown extends React.Component {
             <label>Update My Current Status</label>
             <select className="form-control" onChange={this.props.updateStatus}>
                 {
-                    this.props.statuses.map(status => <option value={status.id} key={status.id}> {status.status} </option>)
+                    this.props.statuses.map(status => <option value={status.id}
+                                                              key={status.id}> {status.status} </option>)
                 }
             </select>
         </div>
@@ -79,3 +70,26 @@ const GreetingHeader = (props) =>
 
 const StatusHeader = (props) =>
     props.status.id ? <span> you are {props.status.status}</span> : null;
+
+class UsersTable extends React.Component {
+    render() {
+        return <div className="col-sm-12">
+            <div className="row">
+                <div className="col-sm-12">
+                    <table className="table table-bordered">
+                        <tbody>
+                        {
+                            this.props.users.map(user => <UserRow key={user.id} user={user}/>)
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+const UserRow = (props) =>
+    <tr style={{backgroundColor: '#' + props.user.status === null ? 'fff' : props.user.status.color}}>
+        <td>{props.user.username} <span>({props.user.status ? props.user.status.status : null})</span></td>
+    </tr>;

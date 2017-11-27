@@ -1,11 +1,12 @@
 import json
 
 from django import views
+from django.http import JsonResponse
 from django.views.generic import TemplateView
-from django.core import serializers
-from django.http import HttpResponse, JsonResponse
+from rest_framework import generics
 
 from .models import User, UserStatus
+from .serializers import UserSerializer, UserStatusSerializer
 
 
 class MainView(TemplateView):
@@ -43,12 +44,11 @@ class ChangeUserStatusView(views.View):
         return JsonResponse({'message': 'ok'}, status=200)
 
 
-class UsersListView(views.View):
-    def get(self, request, *args, **kwargs):
-        return JsonResponse(serializers.serialize('json', User.objects.all()), safe=False)
+class UsersListAPIView(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
 
-class UserStatusesListView(views.View):
-    def get(self, request, *args, **kwargs):
-        return JsonResponse(serializers.serialize('json', UserStatus.objects.all()), safe=False)
-
+class UserStatusesListAPIView(generics.ListAPIView):
+    queryset = UserStatus.objects.all()
+    serializer_class = UserStatusSerializer

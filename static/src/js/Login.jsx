@@ -1,6 +1,8 @@
 import React from 'react';
 import axios from 'axios';
+import { observer } from 'mobx-react';
 
+@observer
 export default class LoginPage extends React.Component {
     constructor() {
         super();
@@ -16,7 +18,7 @@ export default class LoginPage extends React.Component {
     login = (e) => {
         axios.post("/login/", {username: this.state.username})
             .then(response => {
-                this.props.updateCurrentUser(response.data);
+                this.props.store.currentUser = response.data;
             });
     };
 

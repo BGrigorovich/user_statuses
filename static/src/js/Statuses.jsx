@@ -1,23 +1,21 @@
 import React from 'react';
 import Websocket from 'react-websocket';
 import axios from 'axios';
+import { observer } from 'mobx-react';
 
+@observer
 export default class StatusesPage extends React.Component {
     constructor() {
         super();
-        this.state = {
-            users: [],
-            statuses: []
-        };
 
         let component = this;
         axios.get("/statuses/")
             .then(response => {
-                component.setState({statuses: response.data});
+                component.props.store.statuses = response.data;
             });
         axios.get("/users/")
             .then(response => {
-                component.setState({users: response.data})
+                component.props.store.users = response.data;
             });
     }
 

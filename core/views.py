@@ -10,7 +10,7 @@ from .serializers import UserSerializer, UserStatusSerializer
 
 
 class MainView(TemplateView):
-    template_name = 'user_statuses.html'
+    template_name = 'general.html'
 
 
 class LoginView(views.View):

@@ -1,7 +1,7 @@
 import React from 'react';
 import Websocket from 'react-websocket';
 import axios from 'axios';
-import { observer } from 'mobx-react';
+import {observer} from 'mobx-react';
 
 @observer
 export default class StatusesPage extends React.Component {
@@ -41,15 +41,16 @@ class UpdateStatusDropdown extends React.Component {
         let statusId = parseInt(e.target.value);
         axios.post("/change-status/", {userId: this.props.store.currentUser.id, statusId: statusId})
             .then(response => {
-                this.props.store.currentUser.status = this.props.store.statuses.filter(status => status.id === statusId);
+                this.props.store.currentUser.status = this.props.store.statuses.filter(status => status.id === statusId) || undefined;
             });
     };
 
     render() {
         return <div className="form-group col-sm-6">
             <label>Update My Current Status</label>
-            <select className="form-control" onChange={this.updateStatus} value={this.props.store.currentUser.status.id}>
-                <option key={0}>---</option>
+            <select className="form-control" onChange={this.updateStatus}
+                    value={this.props.store.currentUser.status.id}>
+                <option key={0} value={undefined}>---</option>
                 {
                     this.props.store.statuses.map(status =>
                         <option value={status.id} key={status.id}> {status.status} </option>)
@@ -70,6 +71,14 @@ const StatusHeader = (props) =>
 
 @observer
 class UsersTable extends React.Component {
+    updateUsernameFilter = (e) => {
+        this.props.store.usernameFilter = e.target.value;
+    };
+
+    updateStatusFilter = (e) => {
+        this.props.store.statusFilter = e.target.value;
+    };
+
     handleWSmessage = (data) => {
         let message = JSON.parse(data);
         let userIndex = this.props.store.users.map(user => user.id).indexOf(message.user.id);
@@ -84,12 +93,17 @@ class UsersTable extends React.Component {
         return <div className="col-sm-12">
             <div className="row">
                 <div className="col-sm-12">
+                    <TableFilters store={this.props.store}
+                                  updateUsernameFilter={this.updateUsernameFilter}
+                                  updateStatusFilter={this.updateStatusFilter}/>
+                </div>
+                <div className="col-sm-12">
                     <Websocket url={"ws://" + window.location.host + "/users/"}
                                onMessage={this.handleWSmessage}/>
                     <table className="table table-bordered">
                         <tbody>
                         {
-                            this.props.store.users.map(user => <UserRow key={user.id} user={user}/>)
+                            this.props.store.filteredUsers.map(user => <UserRow key={user.id} user={user}/>)
                         }
                         </tbody>
                     </table>
@@ -108,3 +122,30 @@ const UserRow = (props) => {
         <td>{props.user.username} <span>({props.user.status ? props.user.status.status : null})</span></td>
     </tr>;
 };
+
+const TableFilters = observer((props) =>
+    <div className="row table-filter">
+        <UsernameFilter store={props.store} updateUsernameFilter={props.updateUsernameFilter}/>
+        <StatusFilter store={props.store} updateStatusFilter={props.updateStatusFilter}/>
+    </div>
+);
+
+const UsernameFilter = observer((props) =>
+    <div className="col-sm-6">
+        <input type="text" placeholder="Search by name..." className="form-control"
+               onChange={props.updateUsernameFilter}/>
+    </div>
+);
+
+const StatusFilter = observer((props) =>
+    <div className="col-sm-6">
+        <select className="form-control" onChange={props.updateStatusFilter}
+                value={props.store.statusFilter}>
+            <option key={0} value={undefined}>Filter by status...</option>
+            {
+                props.store.statuses.map(status =>
+                    <option value={status.id} key={status.id}> {status.status} </option>)
+            }
+        </select>
+    </div>
+);

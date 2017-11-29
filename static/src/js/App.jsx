@@ -1,8 +1,9 @@
 import React from 'react';
-import LoginPage from './Login.jsx';
-import StatusesPage from './Statuses.jsx';
 import axios from 'axios';
 import { observer } from 'mobx-react';
+
+import LoginPage from './Login.jsx';
+import StatusesPage from './Statuses.jsx';
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -11,9 +12,9 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 export default class App extends React.Component {
     render() {
         if (!this.props.store.currentUser.id) {
-            return <LoginPage/>;
+            return <LoginPage store={this.props.store}/>;
         } else {
-            return <StatusesPage/>;
+            return <StatusesPage store={this.props.store}/>;
         }
     }
 }

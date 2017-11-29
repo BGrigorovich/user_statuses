@@ -16,17 +16,18 @@ export default class LoginPage extends React.Component {
     };
 
     login = (e) => {
+        let component = this;
         axios.post("/login/", {username: this.state.username})
             .then(response => {
-                this.props.store.currentUser = response.data;
+                component.props.store.currentUser = response.data;
             });
     };
 
     render() {
         return <div className="row">
             <GreetingLabel/>
-            <UsernameInput updateUsername={this.updateUsername.bind(this)}/>
-            <LoginButton login={this.login.bind(this)}/>
+            <UsernameInput updateUsername={this.updateUsername}/>
+            <LoginButton login={this.login}/>
         </div>
     }
 }
